@@ -15,6 +15,13 @@
 </head>
 <body>
 
+  <!-- Apply the saved theme before first paint (prevents a light-mode flash in dark mode) -->
+  <script>
+    try {
+      if (localStorage.getItem('gea-theme') === 'dark') document.body.classList.add('dark');
+    } catch (e) { /* storage unavailable: stay in light mode */ }
+  </script>
+
   <!-- ========== TOP INFO BAR ========== -->
   <div class="topbar">
     <div class="container topbar__inner">
@@ -29,32 +36,33 @@
 
       <a href="#home" class="logo">Global <span>Education</span> Academy</a>
 
-      <!-- Mobile menu toggle -->
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-
-      <nav class="nav" id="nav">
+      <!-- Desktop navigation (hidden on mobile, where the sidebar is used) -->
+      <nav class="nav" aria-label="Main navigation">
         <ul class="nav__links">
           <li><a href="#home">Home</a></li>
           <li><a href="#courses">Courses</a></li>
           <li><a href="#toppers">Toppers</a></li>
         </ul>
 
-        <!-- Smart Search -->
-        <div class="search" id="search">
-          <input type="text" id="searchInput" class="search__input"
-                 placeholder="Search courses, JEE, NEET..." autocomplete="off"
-                 aria-label="Search the website">
-          <ul class="search__results" id="searchResults" role="listbox"></ul>
-        </div>
+        <!-- Smart Search: press Enter to search -->
+        <form class="search js-search" role="search" autocomplete="off">
+          <input type="search" class="search__input" placeholder="Search study material..."
+                 aria-label="Search study material" enterkeyhint="search">
+        </form>
 
-        <a href="#" class="btn btn--outline nav__login">Student Login</a>
+        <a href="#" class="btn btn--outline">Student Login</a>
       </nav>
+
+      <!-- Hamburger: opens the sidebar -->
+      <button class="menu-btn" id="menuBtn" type="button"
+              aria-label="Open menu" aria-controls="drawer" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
 
   <main>
+
     <!-- ========== HERO ========== -->
     <section class="hero" id="home">
       <div class="hero__overlay"></div>
@@ -82,7 +90,7 @@
         <div class="cards">
 
           <!-- Card 1 -->
-          <article class="card" data-search="foundation class 9 10 weekly test study material">
+          <article class="card">
             <span class="card__tag">Class 9-10</span>
             <h3>Foundation</h3>
             <p class="card__desc">Build strong basics in Maths, Science and Mental Ability.</p>
@@ -95,7 +103,7 @@
           </article>
 
           <!-- Card 2 -->
-          <article class="card card--featured" data-search="target class 11 12 jee neet doubt support advanced modules">
+          <article class="card card--featured">
             <span class="card__tag">Class 11-12 | JEE/NEET</span>
             <h3>Target</h3>
             <p class="card__desc">Focused preparation for JEE and NEET with advanced practice.</p>
@@ -111,22 +119,164 @@
       </div>
     </section>
 
-    <!-- Placeholder anchors for the remaining nav links and the CTA -->
+    <!-- ========== TOPPERS GALLERY ========== -->
     <section class="section section--alt" id="toppers">
-      <div class="container section__head">
-        <h2>Our Toppers</h2>
-        <p>Results section coming soon.</p>
+      <div class="container">
+        <div class="section__head">
+          <h2>Our Shining Stars</h2>
+          <p>Proud achievements of our students.</p>
+        </div>
+
+        <!--
+          HOW TO ADD REAL PHOTOS:
+          Replace each img src with your GitHub raw link, for example:
+          https://raw.githubusercontent.com/YOUR-USER/YOUR-REPO/main/images/topper1.jpg
+          Ideal photo size: 400 x 500 px (4:5 portrait).
+          Replace the sample names and scores below with real, verified results.
+        -->
+        <div class="stars">
+
+          <article class="star-card">
+            <div class="star-card__img">
+              <img src="https://placehold.co/400x500/000080/FFD700?text=Photo" alt="Portrait of topper Student Name"
+                   width="400" height="500" loading="lazy">
+            </div>
+            <div class="star-card__body">
+              <h3>Student Name</h3>
+              <p class="star-card__score">98% in Boards</p>
+            </div>
+          </article>
+
+          <article class="star-card">
+            <div class="star-card__img">
+              <img src="https://placehold.co/400x500/000080/FFD700?text=Photo" alt="Portrait of topper Student Name"
+                   width="400" height="500" loading="lazy">
+            </div>
+            <div class="star-card__body">
+              <h3>Student Name</h3>
+              <p class="star-card__score">96% in Boards</p>
+            </div>
+          </article>
+
+          <article class="star-card">
+            <div class="star-card__img">
+              <img src="https://placehold.co/400x500/000080/FFD700?text=Photo" alt="Portrait of topper Student Name"
+                   width="400" height="500" loading="lazy">
+            </div>
+            <div class="star-card__body">
+              <h3>Student Name</h3>
+              <p class="star-card__score">Score in NEET</p>
+            </div>
+          </article>
+
+          <article class="star-card">
+            <div class="star-card__img">
+              <img src="https://placehold.co/400x500/000080/FFD700?text=Photo" alt="Portrait of topper Student Name"
+                   width="400" height="500" loading="lazy">
+            </div>
+            <div class="star-card__body">
+              <h3>Student Name</h3>
+              <p class="star-card__score">Score in JEE Main</p>
+            </div>
+          </article>
+
+        </div>
       </div>
     </section>
 
-    <section class="section" id="counselling">
-      <div class="container section__head">
-        <h2>Book Free Counselling</h2>
-        <p>Contact form coming soon. Call us on +91-XXXXX XXXXX.</p>
+    <!-- ========== ABOUT US (linked from sidebar; replace with your content) ========== -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section__head">
+          <h2>About Us</h2>
+          <p>Global Education Academy is dedicated to concept clarity, regular practice and personal mentoring for students of Class 9-12, NEET and JEE.</p>
+        </div>
       </div>
     </section>
+
+    <!-- ========== IMPORTANT DATES (linked from sidebar; replace with real dates) ========== -->
+    <section class="section section--alt" id="dates">
+      <div class="container">
+        <div class="section__head">
+          <h2>Important Dates</h2>
+          <p>Keep track of admissions and test schedules.</p>
+        </div>
+        <ul class="dates">
+          <li><span>New Batch Begins</span><strong>Date: --</strong></li>
+          <li><span>Scholarship Test</span><strong>Date: --</strong></li>
+          <li><span>Admission Last Date</span><strong>Date: --</strong></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========== COUNSELLING (CTA target; form can be added here later) ========== -->
+    <section class="section" id="counselling">
+      <div class="container">
+        <div class="section__head">
+          <h2>Book Free Counselling</h2>
+          <p>Enquiry form coming soon. Call us on +91-XXXXX XXXXX.</p>
+        </div>
+      </div>
+    </section>
+
   </main>
+
+  <!-- ========== SIDEBAR (SIDE DRAWER) ========== -->
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="drawer" id="drawer" aria-label="Site menu" aria-hidden="true">
+
+    <div class="drawer__head">
+      <span class="drawer__brand">Global <span>Education</span> Academy</span>
+      <button type="button" class="drawer__close" id="drawerClose" aria-label="Close menu">&times;</button>
+    </div>
+
+    <!-- Search inside the sidebar (shown on mobile only) -->
+    <form class="search js-search drawer__search" role="search" autocomplete="off">
+      <input type="search" class="search__input" placeholder="Search study material..."
+             aria-label="Search study material" enterkeyhint="search">
+    </form>
+
+    <nav class="drawer__nav" aria-label="Sidebar navigation">
+      <ul>
+        <li>
+          <a href="#" class="drawer__item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+            <span class="drawer__text">Student Login</span>
+          </a>
+        </li>
+        <li>
+          <a href="#about" class="drawer__item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>
+            <span class="drawer__text">About Us</span>
+          </a>
+        </li>
+        <li>
+          <a href="#dates" class="drawer__item">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+            <span class="drawer__text">Important Dates</span>
+          </a>
+        </li>
+        <li>
+          <!-- Settings (Appearance): toggles Dark / Light mode -->
+          <button type="button" class="drawer__item" id="themeToggle" aria-pressed="false">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+            <span class="drawer__text">Settings (Appearance)<small id="themeLabel">Light mode</small></span>
+            <span class="switch" aria-hidden="true"></span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Logout sits at the very bottom -->
+    <div class="drawer__foot">
+      <button type="button" class="drawer__item drawer__item--logout" id="logoutBtn">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span class="drawer__text">Logout</span>
+      </button>
+    </div>
+  </aside>
 
   <script src="script.js"></script>
 </body>
-    </html>
+              </html>
