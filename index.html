@@ -12,6 +12,82 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
+
+  <!--
+    SIDEBAR SAFETY NET
+    These rules guarantee the hamburger button, overlay and sliding drawer work
+    even if style.css is an older version. They load after style.css, so they
+    are harmless duplicates when style.css already has them.
+  -->
+  <style>
+    /* Hamburger button */
+    .menu-btn {
+      display: flex; flex-direction: column; justify-content: center; gap: 5px;
+      width: 44px; height: 44px; padding: 0 10px;
+      background: transparent; border: 1px solid var(--border, #e3e7f0);
+      border-radius: 8px; cursor: pointer;
+    }
+    .menu-btn span { display: block; height: 3px; background: var(--heading, #000080); border-radius: 2px; }
+
+    /* Dark overlay behind the drawer */
+    .overlay {
+      position: fixed; inset: 0; z-index: 250;
+      background: rgba(0, 0, 40, 0.55);
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.3s, visibility 0s 0.3s;
+    }
+    .overlay.show { opacity: 1; visibility: visible; transition: opacity 0.3s; }
+
+    /* Drawer: hidden off-screen to the right until .open is added */
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 300;
+      width: min(320px, 86vw);
+      display: flex; flex-direction: column;
+      background: var(--card, #ffffff); color: var(--text, #1f2937);
+      border-left: 4px solid #FFD700;
+      box-shadow: -8px 0 28px rgba(0, 0, 0, 0.25);
+      overflow-y: auto;
+      transform: translateX(100%);
+      visibility: hidden;
+      transition: transform 0.3s ease, visibility 0s 0.3s;
+    }
+    .drawer.open { transform: translateX(0); visibility: visible; transition: transform 0.3s ease; }
+    body.dark .drawer { background: #131b3a; color: #dde1f2; }
+
+    /* Stop the page scrolling behind the open drawer */
+    body.no-scroll { overflow: hidden; }
+
+    /* Drawer parts */
+    .drawer__head { display: flex; align-items: center; justify-content: space-between; padding: 18px 16px; background: #000080; color: #fff; }
+    .drawer__brand { font-weight: 600; line-height: 1.3; }
+    .drawer__brand span { color: #FFD700; }
+    .drawer__close { width: 38px; height: 38px; font-size: 1.8rem; line-height: 1; color: #fff; background: transparent; border: 1px solid rgba(255,255,255,0.35); border-radius: 8px; cursor: pointer; }
+    .drawer__search { padding: 16px 16px 4px; }
+    .drawer__nav { padding: 12px 10px; }
+    .drawer__nav ul { list-style: none; margin: 0; padding: 0; }
+    .drawer__item {
+      display: flex; align-items: center; gap: 14px; width: 100%;
+      padding: 14px 12px; font-family: inherit; font-size: 0.98rem; font-weight: 500;
+      color: inherit; text-align: left; text-decoration: none;
+      background: transparent; border: none; border-radius: 8px; cursor: pointer;
+    }
+    .drawer__item:hover { background: rgba(0, 0, 128, 0.07); }
+    .drawer__text { flex: 1; }
+    .drawer__text small { display: block; font-size: 0.78rem; font-weight: 400; opacity: 0.7; }
+    .drawer__foot { margin-top: auto; padding: 12px 10px 16px; border-top: 1px solid var(--border, #e3e7f0); }
+    .drawer__item--logout { color: #b42318; }
+    .drawer__item--logout .icon { stroke: #b42318; }
+    .icon { flex: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Dark/Light switch inside Settings (Appearance) */
+    .switch { position: relative; flex: none; width: 42px; height: 24px; background: #c4c9dc; border-radius: 24px; transition: background 0.25s; }
+    .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; background: #fff; border-radius: 50%; transition: transform 0.25s; }
+    [aria-pressed="true"] > .switch { background: #FFD700; }
+    [aria-pressed="true"] > .switch::after { transform: translateX(18px); background: #000080; }
+
+    /* The navbar already has search on desktop */
+    @media (min-width: 992px) { .drawer__search { display: none; } }
+  </style>
 </head>
 <body>
 
@@ -231,52 +307,4 @@
       <button type="button" class="drawer__close" id="drawerClose" aria-label="Close menu">&times;</button>
     </div>
 
-    <!-- Search inside the sidebar (shown on mobile only) -->
-    <form class="search js-search drawer__search" role="search" autocomplete="off">
-      <input type="search" class="search__input" placeholder="Search study material..."
-             aria-label="Search study material" enterkeyhint="search">
-    </form>
-
-    <nav class="drawer__nav" aria-label="Sidebar navigation">
-      <ul>
-        <li>
-          <a href="#" class="drawer__item">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
-            <span class="drawer__text">Student Login</span>
-          </a>
-        </li>
-        <li>
-          <a href="#about" class="drawer__item">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>
-            <span class="drawer__text">About Us</span>
-          </a>
-        </li>
-        <li>
-          <a href="#dates" class="drawer__item">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-            <span class="drawer__text">Important Dates</span>
-          </a>
-        </li>
-        <li>
-          <!-- Settings (Appearance): toggles Dark / Light mode -->
-          <button type="button" class="drawer__item" id="themeToggle" aria-pressed="false">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
-            <span class="drawer__text">Settings (Appearance)<small id="themeLabel">Light mode</small></span>
-            <span class="switch" aria-hidden="true"></span>
-          </button>
-        </li>
-      </ul>
-    </nav>
-
-    <!-- Logout sits at the very bottom -->
-    <div class="drawer__foot">
-      <button type="button" class="drawer__item drawer__item--logout" id="logoutBtn">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        <span class="drawer__text">Logout</span>
-      </button>
-    </div>
-  </aside>
-
-  <script src="script.js"></script>
-</body>
-              </html>
+    <!--
