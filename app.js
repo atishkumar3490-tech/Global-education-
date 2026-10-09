@@ -1,141 +1,139 @@
 /* =========================================================
    Global Education Academy - Vanilla JS
    1. Sticky navbar shadow on scroll
-   2. Mobile menu toggle
-   3. Smart search (suggestions + keyboard + highlight)
+   2. Sidebar (side drawer) open / close
+   3. Dark / Light mode (Settings > Appearance)
+   4. Smart search (Enter shows an alert)
+   5. Placeholder actions (Logout, "#" links)
    ========================================================= */
 
 (function () {
   'use strict';
 
+  const body = document.body;
+
+  /* ---------- Small helpers: safe localStorage access ---------- */
+  function readStore(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function writeStore(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) { /* ignore */ }
+  }
+
   /* ---------- 1. Navbar shadow on scroll ---------- */
   const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
+  window.addEventListener('scroll', function () {
     navbar.classList.toggle('scrolled', window.scrollY > 10);
   }, { passive: true });
 
-  /* ---------- 2. Mobile menu ---------- */
-  const navToggle = document.getElementById('navToggle');
-  const nav = document.getElementById('nav');
+  /* ---------- 2. Sidebar (side drawer) ---------- */
+  const menuBtn = document.getElementById('menuBtn');
+  const drawer = document.getElementById('drawer');
+  const overlay = document.getElementById('overlay');
+  const drawerClose = document.getElementById('drawerClose');
 
-  navToggle.addEventListener('click', () => {
-    const isOpen = nav.classList.toggle('open');
-    navToggle.setAttribute('aria-expanded', String(isOpen));
+  function isDrawerOpen() {
+    return drawer.classList.contains('open');
+  }
+
+  function openDrawer() {
+    drawer.classList.add('open');
+    overlay.classList.add('show');
+    drawer.setAttribute('aria-hidden', 'false');
+    menuBtn.setAttribute('aria-expanded', 'true');
+    body.classList.add('no-scroll');
+    drawerClose.focus();                       // move focus into the drawer
+  }
+
+  function closeDrawer(returnFocus) {
+    drawer.classList.remove('open');
+    overlay.classList.remove('show');
+    drawer.setAttribute('aria-hidden', 'true');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    body.classList.remove('no-scroll');
+    if (returnFocus) menuBtn.focus();
+  }
+
+  menuBtn.addEventListener('click', openDrawer);
+  drawerClose.addEventListener('click', function () { closeDrawer(true); });
+  overlay.addEventListener('click', function () { closeDrawer(true); });
+
+  // Close with the Escape key
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isDrawerOpen()) closeDrawer(true);
   });
 
-  // Close the menu after tapping a link (mobile)
-  nav.querySelectorAll('.nav__links a').forEach(link => {
-    link.addEventListener('click', () => {
-      nav.classList.remove('open');
-      navToggle.setAttribute('aria-expanded', 'false');
-    });
-  });
-
-  /* ---------- 3. Smart search ---------- */
-  const input = document.getElementById('searchInput');
-  const resultsBox = document.getElementById('searchResults');
-
-  /*
-    Search index. Add or edit entries as the site grows.
-    keywords: extra words that should also match the entry.
-  */
-  const searchIndex = [
-    { title: 'Foundation (Class 9-10)', target: '#courses', keywords: 'class 9 class 10 foundation weekly test study material' },
-    { title: 'Target (Class 11-12 | JEE/NEET)', target: '#courses', keywords: 'class 11 class 12 jee neet doubt support advanced modules' },
-    { title: 'JEE Preparation', target: '#courses', keywords: 'iit engineering jee main advanced' },
-    { title: 'NEET Preparation', target: '#courses', keywords: 'medical mbbs neet biology' },
-    { title: 'Fee Structure', target: '#courses', keywords: 'fees price cost payment' },
-    { title: 'Toppers & Results', target: '#toppers', keywords: 'result topper rank selection' },
-    { title: 'Book Free Counselling', target: '#counselling', keywords: 'counselling demo enquiry contact admission' }
-  ];
-
-  let activeIndex = -1; // keyboard-highlighted suggestion
-
-  // Escape user text before using it in a RegExp or innerHTML
-  const escapeHTML = s => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-  function highlight(text, query) {
-    const safe = escapeHTML(text);
-    return safe.replace(new RegExp('(' + escapeRegExp(escapeHTML(query)) + ')', 'ig'), '<mark>$1</mark>');
-  }
-
-  function renderResults(query) {
-    const q = query.trim().toLowerCase();
-    activeIndex = -1;
-
-    if (!q) {
-      resultsBox.classList.remove('show');
-      resultsBox.innerHTML = '';
-      return;
-    }
-
-    // Every typed word must appear in the title or keywords
-    const words = q.split(/\s+/);
-    const matches = searchIndex.filter(item => {
-      const haystack = (item.title + ' ' + item.keywords).toLowerCase();
-      return words.every(w => haystack.includes(w));
-    });
-
-    resultsBox.innerHTML = matches.length
-      ? matches.map(m => `<li role="option"><a href="${m.target}">${highlight(m.title, q)}</a></li>`).join('')
-      : '<li class="no-result">No results found</li>';
-
-    resultsBox.classList.add('show');
-  }
-
-  function closeResults() {
-    resultsBox.classList.remove('show');
-    activeIndex = -1;
-  }
-
-  input.addEventListener('input', () => renderResults(input.value));
-  input.addEventListener('focus', () => renderResults(input.value));
-
-  // Keyboard navigation: arrows to move, Enter to open, Esc to close
-  input.addEventListener('keydown', e => {
-    const items = resultsBox.querySelectorAll('li:not(.no-result)');
-
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      if (!items.length) return;
+  // Keep keyboard focus inside the drawer while it is open
+  drawer.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab') return;
+    const focusable = Array.prototype.filter.call(
+      drawer.querySelectorAll('a[href], button, input'),
+      function (el) { return el.offsetParent !== null; }   // skip hidden elements
+    );
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
       e.preventDefault();
-      activeIndex = e.key === 'ArrowDown'
-        ? (activeIndex + 1) % items.length
-        : (activeIndex - 1 + items.length) % items.length;
-      items.forEach((li, i) => li.classList.toggle('active', i === activeIndex));
-      items[activeIndex].scrollIntoView({ block: 'nearest' });
-    } else if (e.key === 'Enter') {
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
       e.preventDefault();
-      const pick = items[activeIndex] || items[0];
-      if (pick) pick.querySelector('a').click();
-    } else if (e.key === 'Escape') {
-      closeResults();
-      input.blur();
+      first.focus();
     }
   });
 
-  // After choosing a result: clear the box, close the menu, flash the target card
-  resultsBox.addEventListener('click', e => {
-    const link = e.target.closest('a');
-    if (!link) return;
+  // Close the drawer after choosing a page link (Settings and Logout are buttons, handled separately)
+  drawer.querySelectorAll('a.drawer__item').forEach(function (link) {
+    link.addEventListener('click', function () { closeDrawer(false); });
+  });
 
-    input.value = '';
-    closeResults();
-    nav.classList.remove('open');
+  /* ---------- 3. Dark / Light mode ---------- */
+  const themeToggle = document.getElementById('themeToggle');
+  const themeLabel = document.getElementById('themeLabel');
 
-    // Briefly highlight a matching course card if one exists
-    const label = link.textContent.toLowerCase();
-    document.querySelectorAll('.card').forEach(card => {
-      const hit = label.split(/\W+/).some(w => w.length > 2 && card.dataset.search.includes(w));
-      if (hit) {
-        card.classList.add('highlight');
-        setTimeout(() => card.classList.remove('highlight'), 2000);
+  function applyTheme(isDark) {
+    body.classList.toggle('dark', isDark);
+    themeToggle.setAttribute('aria-pressed', String(isDark));
+    themeLabel.textContent = isDark ? 'Dark mode' : 'Light mode';
+  }
+
+  // Sync the toggle with the theme already applied before first paint
+  applyTheme(body.classList.contains('dark') || readStore('gea-theme') === 'dark');
+
+  themeToggle.addEventListener('click', function () {
+    const makeDark = !body.classList.contains('dark');
+    applyTheme(makeDark);
+    writeStore('gea-theme', makeDark ? 'dark' : 'light');   // remember the choice
+  });
+
+  /* ---------- 4. Smart search ---------- */
+  // Works for every search form (navbar on desktop, sidebar on mobile).
+  // Pressing Enter submits the form and shows the alert.
+  document.querySelectorAll('.js-search').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const input = form.querySelector('input');
+      const query = input.value.trim();
+
+      if (!query) {            // nothing typed: just keep the cursor in the box
+        input.focus();
+        return;
       }
+
+      if (isDrawerOpen()) closeDrawer(false);
+      alert('Searching study material for: ' + query);
     });
   });
 
-  // Close suggestions when clicking outside the search box
-  document.addEventListener('click', e => {
-    if (!e.target.closest('#search')) closeResults();
+  /* ---------- 5. Placeholder actions ---------- */
+  // Logout: connect this to your real logout logic later.
+  document.getElementById('logoutBtn').addEventListener('click', function () {
+    closeDrawer(true);
+  });
+
+  // Links with href="#" (like Student Login) should not jump the page to the top.
+  document.querySelectorAll('a[href="#"]').forEach(function (link) {
+    link.addEventListener('click', function (e) { e.preventDefault(); });
   });
 })();
