@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Education Academy | Coaching for Class 9-12, NEET & JEE</title>
+  <meta name="description" content="A trusted and results oriented coaching institute for Class 9-12, NEET and JEE.">
+
+  <!-- Poppins font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ========== TOP INFO BAR ========== -->
+  <div class="topbar">
+    <div class="container topbar__inner">
+      <a href="tel:+91XXXXXXXXXX" class="topbar__link">&#9742; +91-XXXXX XXXXX</a>
+      <a href="mailto:info@globaleducationacademy.in" class="topbar__link">&#9993; info@globaleducationacademy.in</a>
+    </div>
+  </div>
+
+  <!-- ========== STICKY NAVBAR ========== -->
+  <header class="navbar" id="navbar">
+    <div class="container navbar__inner">
+
+      <a href="#home" class="logo">Global <span>Education</span> Academy</a>
+
+      <!-- Mobile menu toggle -->
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="nav" id="nav">
+        <ul class="nav__links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#courses">Courses</a></li>
+          <li><a href="#toppers">Toppers</a></li>
+        </ul>
+
+        <!-- Smart Search -->
+        <div class="search" id="search">
+          <input type="text" id="searchInput" class="search__input"
+                 placeholder="Search courses, JEE, NEET..." autocomplete="off"
+                 aria-label="Search the website">
+          <ul class="search__results" id="searchResults" role="listbox"></ul>
+        </div>
+
+        <a href="#" class="btn btn--outline nav__login">Student Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ========== HERO ========== -->
+    <section class="hero" id="home">
+      <div class="hero__overlay"></div>
+      <div class="container hero__content">
+        <h1>A Trusted &amp; Results Oriented Coaching Classes</h1>
+        <p class="hero__sub">Expert faculty, disciplined practice and personal attention for every student.</p>
+
+        <div class="badges">
+          <span class="badge">&#127891; 5000+ Students</span>
+          <span class="badge">&#128218; Class 9-12 | NEET | JEE</span>
+        </div>
+
+        <a href="#counselling" class="btn btn--cta btn--lg">Book Free Counselling</a>
+      </div>
+    </section>
+
+    <!-- ========== BATCHES & FEES ========== -->
+    <section class="section" id="courses">
+      <div class="container">
+        <div class="section__head">
+          <h2>Our Batches &amp; Fee Structure</h2>
+          <p>Choose the program that fits your child's class and goal.</p>
+        </div>
+
+        <div class="cards">
+
+          <!-- Card 1 -->
+          <article class="card" data-search="foundation class 9 10 weekly test study material">
+            <span class="card__tag">Class 9-10</span>
+            <h3>Foundation</h3>
+            <p class="card__desc">Build strong basics in Maths, Science and Mental Ability.</p>
+            <ul class="card__features">
+              <li>Weekly Test</li>
+              <li>Study Material</li>
+            </ul>
+            <p class="card__fees">Fees: <strong>₹---</strong></p>
+            <a href="#counselling" class="btn btn--primary">Enquire Now</a>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="card card--featured" data-search="target class 11 12 jee neet doubt support advanced modules">
+            <span class="card__tag">Class 11-12 | JEE/NEET</span>
+            <h3>Target</h3>
+            <p class="card__desc">Focused preparation for JEE and NEET with advanced practice.</p>
+            <ul class="card__features">
+              <li>Doubt Support</li>
+              <li>Advanced Modules</li>
+            </ul>
+            <p class="card__fees">Fees: <strong>₹---</strong></p>
+            <a href="#counselling" class="btn btn--primary">Enquire Now</a>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Placeholder anchors for the remaining nav links and the CTA -->
+    <section class="section section--alt" id="toppers">
+      <div class="container section__head">
+        <h2>Our Toppers</h2>
+        <p>Results section coming soon.</p>
+      </div>
+    </section>
+
+    <section class="section" id="counselling">
+      <div class="container section__head">
+        <h2>Book Free Counselling</h2>
+        <p>Contact form coming soon. Call us on +91-XXXXX XXXXX.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+    </html>
